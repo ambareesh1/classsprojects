@@ -41,3 +41,7 @@ Based on the provided 19-page CLASSS Projects Developer Brief. Product photograp
 ## Framework recommendation
 
 For a longer-lived multi-page marketing site, move these React components to Next.js with `output: 'export'`, dedicated project URLs and generated metadata. This temporary version uses a static React build to minimize infrastructure.
+
+## Image asset storage
+
+The ESP32 photo is stored losslessly as numbered Base64 parts in `assets-source/` for upload compatibility. `npm run build` restores the original photo to `dist/assets/esp32.jpg` automatically. Keep all parts in the repository; no additional setup is required.

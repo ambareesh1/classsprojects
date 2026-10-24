@@ -1,8 +1,11 @@
 import {build} from 'esbuild';
-import {readFileSync,writeFileSync} from 'node:fs';
+import {readFileSync,writeFileSync,readdirSync,mkdirSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
+mkdirSync('dist/assets',{recursive:true});
+const imageParts=readdirSync('assets-source').filter(name=>name.startsWith('esp32.jpg.base64.')).sort();
+writeFileSync('dist/assets/esp32.jpg',Buffer.from(imageParts.map(name=>readFileSync('assets-source/'+name,'utf8')).join(''),'base64'));
 await build({entryPoints:['src/entry.jsx'],bundle:true,minify:true,outfile:'dist/app.js',define:{'process.env.NODE_ENV':'"production"'},target:['es2020'],legalComments:'eof'});
 const compiled=await build({entryPoints:['src/main.jsx'],bundle:true,write:false,platform:'node',format:'cjs',external:['react','react-dom'],jsx:'automatic'});
 const module={exports:{}};
