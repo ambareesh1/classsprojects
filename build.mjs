@@ -1,0 +1,14 @@
+import {build} from 'esbuild';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createRequire} from 'node:module';
+import React from 'react';
+import {renderToString} from 'react-dom/server';
+await build({entryPoints:['src/entry.jsx'],bundle:true,minify:true,outfile:'dist/app.js',define:{'process.env.NODE_ENV':'"production"'},target:['es2020'],legalComments:'eof'});
+const compiled=await build({entryPoints:['src/main.jsx'],bundle:true,write:false,platform:'node',format:'cjs',external:['react','react-dom'],jsx:'automatic'});
+const module={exports:{}};
+new Function('require','module','exports',compiled.outputFiles[0].text)(createRequire(import.meta.url),module,module.exports);
+globalThis.window={CLASSS_CONFIG:{googleFormUrl:''}};
+const html=renderToString(React.createElement(module.exports.default));
+const template=readFileSync('index.template.html','utf8');
+writeFileSync('dist/index.html',template.replace('<div id="root"></div>','<div id="root">'+html+'</div>'));
+delete globalThis.window;
